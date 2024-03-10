@@ -1,6 +1,9 @@
 import { GraphQLList, GraphQLObjectType } from 'graphql';
-import { MemberType } from './types/memberType.js';
+import { MemberType } from './types/member.js';
 import { GraphQLContext } from './types/context.js';
+import { PostType } from './types/post.js';
+import { UserType } from './types/user.js';
+import { ProfileType } from './types/profile.js';
 
 export const query = new GraphQLObjectType({
   name: 'Query',
@@ -11,25 +14,23 @@ export const query = new GraphQLObjectType({
         return prisma.memberType.findMany();
       },
     },
-    // human: {
-    //   type: humanType,
-    //   args: {
-    //     id: {
-    //       description: 'id of the human',
-    //       type: new GraphQLNonNull(GraphQLString),
-    //     },
-    //   },
-    //   resolve: (_source, { id }) => getHuman(id),
-    // },
-    // droid: {
-    //   type: droidType,
-    //   args: {
-    //     id: {
-    //       description: 'id of the droid',
-    //       type: new GraphQLNonNull(GraphQLString),
-    //     },
-    //   },
-    //   resolve: (_source, { id }) => getDroid(id),
-    // },
+    posts: {
+      type: new GraphQLList(PostType),
+      resolve: async (_source, _args, { prisma }: GraphQLContext) => {
+        return prisma.post.findMany();
+      },
+    },
+    users: {
+      type: new GraphQLList(UserType),
+      resolve: async (_source, _args, { prisma }: GraphQLContext) => {
+        return prisma.user.findMany();
+      },
+    },
+    profiles: {
+      type: new GraphQLList(ProfileType),
+      resolve: async (_source, _args, { prisma }: GraphQLContext) => {
+        return prisma.profile.findMany();
+      },
+    },
   }),
 });
