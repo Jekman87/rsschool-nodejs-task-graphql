@@ -1,3 +1,4 @@
+import { MemberTypeId } from './../../member-types/schemas.js';
 import { PrismaClient } from '@prisma/client';
 
 export type GraphQLContext = {
@@ -6,4 +7,5 @@ export type GraphQLContext = {
 
 export type Args = {
   id: string;
+  memberTypeId: MemberTypeId;
 };
