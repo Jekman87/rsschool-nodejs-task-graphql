@@ -1,5 +1,6 @@
 import {
   GraphQLFloat,
+  GraphQLInputObjectType,
   GraphQLList,
   GraphQLNonNull,
   GraphQLObjectType,
@@ -19,7 +20,7 @@ export const UserType: GraphQLObjectType = new GraphQLObjectType({
     profile: {
       type: ProfileType,
       resolve: async ({ id }: Args, _args, { prisma }: GraphQLContext) => {
-        return prisma.profile.findUnique({ where: { userId: id } })
+        return prisma.profile.findUnique({ where: { userId: id } });
       },
     },
     posts: {
@@ -45,5 +46,21 @@ export const UserType: GraphQLObjectType = new GraphQLObjectType({
         });
       },
     },
+  }),
+});
+
+export const CreateUserInput: GraphQLInputObjectType = new GraphQLInputObjectType({
+  name: 'CreateUserInput',
+  fields: () => ({
+    name: { type: new GraphQLNonNull(GraphQLString) },
+    balance: { type: new GraphQLNonNull(GraphQLFloat) },
+  }),
+});
+
+export const ChangeUserInput = new GraphQLInputObjectType({
+  name: 'ChangeUserInput',
+  fields: () => ({
+    name: { type: GraphQLString },
+    balance: { type: GraphQLFloat },
   }),
 });
