@@ -1,8 +1,10 @@
+import { createDataLoaders } from '../dataLoader.js';
 import { MemberTypeId } from './../../member-types/schemas.js';
 import { PrismaClient } from '@prisma/client';
 
 export type GraphQLContext = {
   prisma: PrismaClient;
+  dataLoaders: ReturnType<typeof createDataLoaders>;
 };
 
 export type Args = {

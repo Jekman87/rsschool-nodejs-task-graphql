@@ -2,6 +2,7 @@ import { FastifyPluginAsyncTypebox } from '@fastify/type-provider-typebox';
 import { createGqlResponseSchema, gqlResponseSchema, schema } from './schemas.js';
 import { graphql, validate, parse } from 'graphql';
 import depthLimit from 'graphql-depth-limit';
+import { createDataLoaders } from './dataLoader.js';
 
 const plugin: FastifyPluginAsyncTypebox = async (fastify) => {
   fastify.route({
@@ -15,6 +16,7 @@ const plugin: FastifyPluginAsyncTypebox = async (fastify) => {
     },
     async handler(req) {
       const { query, variables } = req.body;
+      const { prisma } = fastify;
 
       try {
         const validateErrors = validate(schema, parse(query), [depthLimit(5)]);
@@ -28,7 +30,8 @@ const plugin: FastifyPluginAsyncTypebox = async (fastify) => {
           source: query,
           variableValues: variables,
           contextValue: {
-            prisma: fastify.prisma,
+            prisma,
+            dataLoaders: createDataLoaders(prisma),
           },
         });
 

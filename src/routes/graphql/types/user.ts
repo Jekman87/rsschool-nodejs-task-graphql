@@ -19,31 +19,26 @@ export const UserType: GraphQLObjectType = new GraphQLObjectType({
     balance: { type: GraphQLFloat },
     profile: {
       type: ProfileType,
-      resolve: async ({ id }: Args, _args, { prisma }: GraphQLContext) => {
-        return prisma.profile.findUnique({ where: { userId: id } });
+      resolve: async ({ id }: Args, _args, { dataLoaders }: GraphQLContext) => {
+        return dataLoaders.userProfile.load(id);
       },
     },
     posts: {
       type: new GraphQLNonNull(new GraphQLList(PostType)),
-      resolve: async ({ id }: Args, _args, { prisma }: GraphQLContext) => {
-        return prisma.post.findMany({ where: { authorId: id } });
+      resolve: async ({ id }: Args, _args, { dataLoaders }: GraphQLContext) => {
+        return dataLoaders.userPosts.load(id);
       },
     },
     userSubscribedTo: {
       type: new GraphQLNonNull(new GraphQLList(UserType)),
-      resolve: async ({ id }: Args, _args, { prisma }: GraphQLContext) => {
-        return prisma.user.findMany({
-          where: { subscribedToUser: { some: { subscriberId: id } } },
-        });
+      resolve: async ({ id }: Args, _args, { dataLoaders }: GraphQLContext) => {
+        return dataLoaders.userSubscribedTo.load(id);
       },
     },
     subscribedToUser: {
       type: new GraphQLNonNull(new GraphQLList(UserType)),
-      resolve: async ({ id }: Args, _args, { prisma }: GraphQLContext) => {
-        return prisma.user.findMany({
-          where: { userSubscribedTo: { some: { authorId: id } } },
-          include: { userSubscribedTo: { select: { authorId: true } } },
-        });
+      resolve: async ({ id }: Args, _args, { dataLoaders }: GraphQLContext) => {
+        return dataLoaders.subscribedToUser.load(id);
       },
     },
   }),
